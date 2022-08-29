@@ -71,10 +71,10 @@
     var maxNum = $('#maxNum').val()
     var expireDate = $('#expireDate').val()
 
-    console.log(adminid, key, type, host, target, service, minPrice, maxNum, expireDate)
+    console.log(ownerid, key, type, host, target, service, minPrice, maxNum, expireDate)
 
     // '/register' POST 요청
-    $.post('/register', {adminid, key, type, host, target, service, minPrice, maxNum, expireDate}, (data)=>{
+    $.post('/register', {ownerid, key, type, host, target, service, minPrice, maxNum, expireDate}, (data)=>{
       if(data.result == 'success'){
           alert("등록 완료되었습니다.");
       }else {
