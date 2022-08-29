@@ -13,59 +13,78 @@
 </head>
 
 <body>
-
     <div class="container">
         <br>
-        <h1>배달 주문<span><a href="/" class="btn btn-outline-warning">돌아가기</a></span></h1>
+        <h1>배달 주문<span><a href="/" class="btn btn-outline-secondary">돌아가기</a></span></h1>
         
         <br><br>
         <div class="container text-center">
             <div class="row">
-              <div class="col">
+              <div class="col-lg-3 col-md-6">
                 <div class="card" style="width: 18rem;">
                     <img src="https://cdn.pixabay.com/photo/2016/03/23/15/00/ice-cream-1274894_960_720.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <form aciton="/order" method="post">
-                            <h5 class="card-title" id="name1">버스킹 라빈스</h5>
-                            <p class="card-text">행복을 전하는 프리미엄 아이스크림, 버스킹 라빈스 입니다.</p>
-                            <input type="hidden" name="name" value="버스킹 라빈스">
-                            <input type="submit" class="btn btn-primary" value="주문">
-                        </form>
+                      <form action="/goOrder" method="post">
+                        <h5 class="card-title">버스킹 라빈스</h5>
+                        <input type="hidden" name="name" value="버스킹 라빈스">
+                        <p class="card-text">행복을 전하는 프리미엄 아이스크림, 버스킹 라빈스 입니다.</p>
+                        <input type="submit" class="btn btn-primary" value="주문">
+                      </form>
                     </div>
                 </div>
               </div>
-              <div class="col">
+              <div class="col-lg-3 col-md-6">
                 <div class="card" style="width: 18rem;">
                     <img src="https://cdn.pixabay.com/photo/2016/11/29/13/02/cheese-1869708_960_720.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <form aciton="/order" method="post">
-                            <h5 class="card-title" id="name2">피짜헛</h5>
-                            <p class="card-text">음식을 먹는 즐거움을 전하는 프리미엄 피자, 피짜헛 입니다.</p>
-                            <input type="hidden" name="name" value="피짜헛">
-                            <input type="submit" class="btn btn-primary" value="주문">
-                        </form>
+                      <form action="/goOrder" method="post">
+                        <h5 class="card-title">피짜헛</h5>
+                        <input type="hidden" name="name" value="피짜헛">
+                        <p class="card-text">음식을 먹는 즐거움을 전하는 프리미엄 피자, 피짜헛 입니다.</p>
+                        <input type="submit" class="btn btn-primary" value="주문">
+                      </form>
                     </div>
                 </div>
               </div>
-              <div class="col">
+              <div class="col-lg-3 col-md-6">
                 <div class="card" style="width: 18rem;">
                     <img src="https://cdn.pixabay.com/photo/2017/05/22/07/11/burger-2333280_960_720.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <form aciton="/order" method="post">
-                            <h5 class="card-title" id="name3">먹고날드</h5>
-                            <p class="card-text">음식을 즐기는 최고의 방법을 전하는 모두의 햄버거, 먹고날드 입니다.</p>
-                            <input type="hidden" name="name" value="먹고날드">
-                            <input type="submit" class="btn btn-primary" value="주문">
-                        </form>
+                      <form action="/goOrder" method="post">
+                        <h5 class="card-title">먹고날드</h5>
+                        <input type="hidden" name="name" value="먹고날드">
+                        <p class="card-text">음식을 즐기는 최고의 방법을 전하는 모두의 햄버거, 먹고날드 입니다.</p>
+                        <input type="submit" class="btn btn-primary" value="주문">
+                      </form>
+                    </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="card" style="width: 18rem;">
+                    <img src="https://cdn.pixabay.com/photo/2015/03/11/00/31/chicken-667935_1280.jpg  " class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <form action="/goOrder" method="post">
+                        <h5 class="card-title">KFC</h5>
+                        <input type="hidden" name="name" value="KFC">
+                        <p class="card-text">정직한 음식이 만드는 행복한 세상, KFC 입니다.</p>
+                        <input type="submit" class="btn btn-primary" value="주문">
+                      </form>
                     </div>
                 </div>
               </div>
             </div>
           </div>
         <br><br>
-
     </div>
 </body>
-<style></style>
+<style>
+  .card-img-top{
+    height: 15rem;
+    object-fit: cover;
+  }
 
+  .card-text{
+    height: 5rem;
+  }
+</style>
 </html>

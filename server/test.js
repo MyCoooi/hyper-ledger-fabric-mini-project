@@ -68,9 +68,7 @@ async function main() {
 			// deployed the first time. Any updates to the chaincode deployed later would likely not need to run
 			// an "init" type function.
 			console.log('\n--> Submit Transaction: RegisterEvent');
-			var target = new Array('hamburger_1')
-			var service = new Array('ice-cream_2', 'chicken-nudget_5')
-			await contract.submitTransaction('RegisterEvent', 'Event10', 'default', 'MacDonalds', 'hamburger_1','ice-cream_2,chicken-nudget_5', 15000, 0, '2022-09-23');
+			await contract.submitTransaction('RegisterEvent', 'Event1', 'default', 'BRrobbins', 'hamburger_1','ice-cream_2,chicken-nudget_5', 15000, 0, '2022-09-23');
 			console.log('*** Result: committed');
 
 			
@@ -78,7 +76,7 @@ async function main() {
 			// Let's try a query type operation (function).
 			// This will be sent to just one peer and the results will be shown.
 			console.log('\n--> Evaluate Transaction: QueryEvent ');
-			let result = await contract.evaluateTransaction('QueryEvent', 'Event10')
+			let result = await contract.evaluateTransaction('QueryEvent', 'Event1')
 			console.log(`*** Result: ${prettyJSONString(result.toString())}`);
 
 			console.log('\n--> Submit Transaction: ChangeEventUser');
@@ -88,7 +86,7 @@ async function main() {
 			// Let's try a query type operation (function).
 			// This will be sent to just one peer and the results will be shown.
 			console.log('\n--> Evaluate Transaction:  GetHistory');
-		 	result = await contract.evaluateTransaction('GetHistory', 'Event10');
+		 	result = await contract.evaluateTransaction('GetHistory', 'Event1');
 			console.log(`*** Result: ${prettyJSONString(result.toString())}`);
 
 		} finally {

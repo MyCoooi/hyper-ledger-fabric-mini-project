@@ -1,62 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>딱 걸리뷰 | 주문서</title>
+  <title>딱 걸리뷰 | 주문서</title>
 
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 
-    <!-- jquery 라이브러리 -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- jquery 라이브러리 -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
+
 <body>
+
     <div class="container">
         <br>
-        <h1>주문서<span><a href="./delivr_order.html" class="btn btn-outline-warning">돌아가기</a></span></h1>
-        <p>주문에 필요한 정보를 입력해주세요</p>
+        <h1>주문서</h1>
+        <p>주문 정보를 입력해주세요.</p>
 
         <br>
-        <label for="adminid" class="form-label">사용자 인증서 ID:</label>
+        <h5 class="fw-bold">😋<%= name %></h5>
+        <br>
+        <label for="adminid" class="form-label">인증서 ID:</label>
         <input type="text" id="id" class="form-control">
         <br>
-        <label for="adminid" class="form-label">주문할 곳:</label>
-        <input type="text" id="host" class="form-control" value="">
-        <br>
         <label for="adminid" class="form-label">주문 내용:</label>
-        <input type="text" id="" class="form-control">
+        <input type="text" id="content" class="form-control">
         <br>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="participating" id="status">
-          <label class="form-check-label" for="flexCheckDefault">
-            리뷰 이벤트 참가 여부
+        <label for="adminid" class="form-label">리뷰 이벤트 번호:</label>
+        <input type="text" id="key" class="form-control">
+        <br>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" value="yes" id="reviewEvent">
+          <label class="form-check-label">
+            리뷰 이벤트 참여 여부
           </label>
         </div>
         <br>
-        <button id="btn" class="btn btn-outline-warning">생성</button>
-        <br><br>
+        <button class="btn btn-outline-warning" id="btn">주문</button>&nbsp;&nbsp;
+        <button class="btn btn-outline-warning" onclick="location.href='/'">취소</button>
+        <br>
     </div>
+    <br><br>
+    <div class="container" id="result"></div>
+    <div class="container" id="result1"></div>
 </body>
 <script>
-    $('#btn').click( ()=> {
-      // parameter가져오기
-      var id = $('#id').val()
-      var 
-      // /admin post 요청하기
-      $.post('/order', {adminid, passwd}, (data)=>{
-        if(data.result == 'success'){
-            alert("성공했습니다.");
-        }else {
-            alert("실패했습니다.");
+  $('#btn').click( ()=> {
+    // parameter가져오기
+    var id = $('#id').val()
+    var content = $('#content').val()
+    var key = $('#key').val()
+    var reviewEvent = document.getElementById('reviewEvent').checked
+
+    console.log(id, content, key, reviewEvent)
+
+    // '/order' POST 요청
+    $.post('/order', {id, key, reviewEvent}, (data)=>{
+      $('#result').empty();
+      $('#result1').empty();
+      if (data.result == 'success'){ 
+        alert("주문 완료되었습니다.");
+        if (data.checked == 'true') {
+          $('#result').append('<div class="form-check form-switch"><input class="form-check-input" type="checkbox" value="yes" id="write" checked><label class="form-check-label">리뷰 쓰기</label></div>')
+          $('#result').append('<br><button class="btn btn-outline-warning" id="btn1">확인</button><br>')
+
+          $('#btn1').click(()=>{
+            var write = document.getElementById('write').checked
+
+            console.log(write)
+
+            $.post('/review', {id, key, write}, (data)=>{
+              if(data.result == 'success'){
+                if (data.checked == 'true') {
+                  alert("성공했습니다. (리뷰 미션 : 완료)");
+                } else {
+                    alert("성공했습니다. (리뷰 미션: 미완료)");
+                }
+                location.href='/'
+              } else {
+                alert("실패했습니다.");
+                $('#result1').empty();
+                $('#result1').append("<p>"+JSON.stringify(data)+"</p>");
+              }
+            })
+          })
+        } else {
+          history.back()
         }
-        // 응답 표시하기
-        $('#result').empty();
+      } else {
+        alert("주문 실패했습니다.");
         $('#result').append("<p>"+JSON.stringify(data)+"</p>");
-      });
-    });
-  
-  </script>
+      }
+    })
+  });
+</script>
 </html>

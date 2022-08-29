@@ -3,7 +3,8 @@
 // 서버세팅
 var express = require('express');
 var path = require('path');
-var fs = require('fs');
+var ejs = require('ejs')
+
 
 // fabric 연결설정
 const { Gateway, Wallets } = require('fabric-network');
@@ -11,6 +12,7 @@ const FabricCAServices = require('fabric-ca-client');
 
 const { buildCAClient, registerAndEnrollUser, enrollAdmin } = require('./js/CAUtil.js');
 const { buildCCPOrg1, buildWallet } = require('./js/AppUtil.js');
+const { reverse } = require('dns');
 
 const mspOrg1 = 'Org1MSP';
 const walletPath = path.join(__dirname, 'wallet');
@@ -149,23 +151,21 @@ app.post('/owner', async(req, res)=>{
     }
 })
 
-// '/order' POST 라우팅
-app.post('/order', async(req,res)=>{
+// '/goOrder' POST 라우팅
+app.post('/goOrder', (req,res)=>{
     var name = req.body.name;
 
-    console.log("/order post start -- ",name);
-    res.render('order_form.ejs')
+    res.render('order_form.ejs', {name: name})
 })
 
-// url : /asset/tx, method : POST  라우팅 처리 
-app.post('/asset/tx', async(req, res) =>{
+// url : /order, method : POST  라우팅 처리 
+app.post('/order', async(req, res) =>{
     // web client요청 문서에서 필요 파라미터들 꺼내오기
-    var userid = req.body.userid;
-    var fkey = req.body.fromkey;
-    var tkey = req.body.tokey;
-    var value = req.body.value;
+    var userid = req.body.id;
+    var ekey = req.body.key
+    var reviewEvent = req.body.reviewEvent
 
-    console.log("/asset/tx post start -- ",userid, fkey, tkey, value);
+    console.log("/order post start -- ", userid, ekey, reviewEvent);
     const gateway = new Gateway();
 
     try {
@@ -178,13 +178,107 @@ app.post('/asset/tx', async(req, res) =>{
         });
         
         const network = await gateway.getNetwork("mychannel");
-        const contract = network.getContract("simpleasset");
-        await contract.submitTransaction('Transfer', fkey, tkey, value);
+        const contract = network.getContract("review_event");
+        if (reviewEvent == true) {
+            await contract.submitTransaction('ChangeEventUser', ekey, userid);
+            await contract.submitTransaction('ChangeEventStatus', ekey, "joining");
+        }
+
+    } catch (error) {
+        var result = `{"result":"fail", "message":"tx has NOT submitted", "checked":"${reviewEvent}"}`;
+        var obj = JSON.parse(result);
+        console.log("/order end -- failed ", error);
+        res.status(200).send(obj);
+        return;
+    }finally {
+        gateway.disconnect();
+    }
+
+    var result = `{"result":"success", "message":"tx has submitted", "checked":"${reviewEvent}"}`;
+    var obj = JSON.parse(result);
+    console.log("/order end -- success");
+    res.status(200).send(obj);
+});
+
+// url : /review, method : POST  라우팅 처리 
+app.post('/review', async(req, res) =>{
+    // web client요청 문서에서 필요 파라미터들 꺼내오기
+    var userid = req.body.id;
+    var ekey = req.body.key
+    var write = req.body.write
+
+    console.log("/review post start -- ", userid, ekey, write);
+    const gateway = new Gateway();
+
+    try {
+        const wallet = await buildWallet(Wallets, walletPath);
+
+        await gateway.connect(ccp, {
+            wallet,
+            identity: userid,
+            discovery: { enabled: true, asLocalhost: true } // using asLocalhost as this gateway is using a fabric network deployed locally
+        });
+        
+        const network = await gateway.getNetwork("mychannel");
+        const contract = network.getContract("review_event");
+        if (write == true) {
+            await contract.submitTransaction('ChangeEventUser', ekey, userid);
+            await contract.submitTransaction('ChangeEventStatus', ekey, "completed");
+        }
+        else {
+            await contract.submitTransaction('ChangeEventUser', ekey, userid);
+            await contract.submitTransaction('ChangeEventStatus', ekey, "notCompleted");
+        }
+
+    } catch (error) {
+        var result = `{"result":"fail", "message":"tx has NOT submitted", "checked":"${write}"}`;
+        var obj = JSON.parse(result);
+        console.log("/review end -- failed ", error);
+        res.status(200).send(obj);
+        return;
+    }finally {
+        gateway.disconnect();
+    }
+
+    var result = `{"result":"success", "message":"tx has submitted", "checked":"${write}"}`;
+    var obj = JSON.parse(result);
+    console.log("/review end -- success");
+    res.status(200).send(obj);
+});
+
+// url : /register, method : POST  라우팅 처리 
+app.post('/register', async(req, res) =>{
+    // web client요청 문서에서 필요 파라미터들 꺼내오기
+    var ownerid = req.body.ownerid
+    var key = req.body.key
+    var type = req.body.type
+    var host = req.body.host
+    var target = req.body.targer
+    var service = req.body.service
+    var minPrice = req.body.minPrice
+    var maxNum = req.body.maxNum
+    var expireDate = req.body.expireDate
+
+    console.log("/register post start -- ", ownerid, key, type, host, target, service, minPrice, maxNum, expireDate);
+    const gateway = new Gateway();
+
+    try {
+        const wallet = await buildWallet(Wallets, walletPath);
+
+        await gateway.connect(ccp, {
+            wallet,
+            identity: ownerid,
+            discovery: { enabled: true, asLocalhost: true } // using asLocalhost as this gateway is using a fabric network deployed locally
+        });
+        
+        const network = await gateway.getNetwork("mychannel");
+        const contract = network.getContract("review_event");
+        await contract.submitTransaction('RegisterEvent', key, type, host, target, service, minPrice, maxNum, expireDate);
 
     } catch (error) {
         var result = `{"result":"fail", "message":"tx has NOT submitted"}`;
         var obj = JSON.parse(result);
-        console.log("/asset end -- failed ", error);
+        console.log("/register end -- failed ", error);
         res.status(200).send(obj);
         return;
     }finally {
@@ -193,7 +287,7 @@ app.post('/asset/tx', async(req, res) =>{
 
     var result = `{"result":"success", "message":"tx has submitted"}`;
     var obj = JSON.parse(result);
-    console.log("/aset end -- success");
+    console.log("/register end -- success");
     res.status(200).send(obj);
 });
 
