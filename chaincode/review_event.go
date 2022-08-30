@@ -22,12 +22,11 @@ type Event struct {
 	Host	string `json:"host"` // 주최자
 	Target	string `json:"target"` // 타겟 상품
 	ServiceProduct	string `json:"serviceProduct"` // 서비스 상품
-	MinPrice	int `json:"minPrice"` // 참여 가능 최소금액
-	MaxNum	int `json:"maxLimit"` // 참여 가능 최대인원
+	MinPrice	string `json:"minPrice"` // 참여 가능 최소금액
+	MaxNum	string `json:"maxLimit"` // 참여 가능 최대인원
 	ExpireDate	string `json:"expireDate"` // 이벤트 종료일
 	User	string 	`json:"user"` // 참여한 사용자
 	Status	string `json:"status"` // 진행 상태(등록/진행중/완료/미완료)
-	Timestamp time.Time `json:"timestamp"`
 }
 
 // history 결과 저장 구조체
@@ -52,15 +51,15 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 			Host:"starbucks",
 			Target:"caffe-latte",
 			ServiceProduct:"banila-cookie_1,americano_1",
-			MinPrice:14000,
-			MaxNum:50,
+			MinPrice:"1400",
+			MaxNum:"50",
 			ExpireDate:"2022-08-26",
 			User:"",
 			Status:"regi",
 		},
-		Event{Type:"receipt",Host:"seoul-milk",Target:"milk",ServiceProduct:"cheese_10",MinPrice:6000,MaxNum:100,ExpireDate:"2022-10-24",User:"",Status:"regi"},
-		Event{Type:"photo",Host:"yellow-chicken",Target:"snow-chicken",ServiceProduct:"cheese-ball_2,hotdog_1,coke_1",MinPrice:19000,MaxNum:0,ExpireDate:"2022-09-01",User:"",Status:"regi"},
-		Event{Type:"text",Host:"pizza-hut",Target:"bulgogi-pizza,mozza-pizza",ServiceProduct:"coke_1,cheese-crust_1",MinPrice:24000,MaxNum:100,ExpireDate:"2022-08-30",User:"",Status:"regi"},
+		Event{Type:"receipt",Host:"seoul-milk",Target:"milk",ServiceProduct:"cheese_10",MinPrice:"6000",MaxNum:"100",ExpireDate:"2022-10-24",User:"",Status:"regi"},
+		Event{Type:"photo",Host:"yellow-chicken",Target:"snow-chicken",ServiceProduct:"cheese-ball_2,hotdog_1,coke_1",MinPrice:"19000",MaxNum:"0",ExpireDate:"2022-09-01",User:"",Status:"regi"},
+		Event{Type:"text",Host:"pizza-hut",Target:"bulgogi-pizza,mozza-pizza",ServiceProduct:"coke_1,cheese-crust_1",MinPrice:"24000",MaxNum:"100",ExpireDate:"2022-08-30",User:"",Status:"regi"},
 	}
 
 	for i, event := range events {
@@ -76,7 +75,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // RegisterEvent adds a new event to the world state with given details
-func (s *SmartContract) RegisterEvent(ctx contractapi.TransactionContextInterface, eventNum string, type1 string, host string, target string, serviceProduct string, minPrice int, maxNum int, expireDate string) error {
+func (s *SmartContract) RegisterEvent(ctx contractapi.TransactionContextInterface, eventNum string, type1 string, host string, target string, serviceProduct string, minPrice string, maxNum string, expireDate string) error {
 	event := Event{
 		Type:	type1,
 		Host:	host,
