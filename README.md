@@ -18,7 +18,6 @@ git clone https://github.com/hyperledger/fabric-samples/tree/main/test-network
 
 
 -START
-3. how to start?
 
 <bash shell----->
 cd ~/test-network
