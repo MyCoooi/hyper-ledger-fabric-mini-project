@@ -4,10 +4,8 @@
 1. Network: fabric-samples/test-network
 (*Github address: https://github.com/hyperledger/fabric-samples/tree/main/test-network)
 
-<bash shell----->
- cd ~
+cd ~
 git clone https://github.com/hyperledger/fabric-samples/tree/main/test-network
-<bash shell done ------>
 
 2. node js install
 
@@ -19,7 +17,6 @@ git clone https://github.com/hyperledger/fabric-samples/tree/main/test-network
 
 -START
 
-<bash shell----->
 cd ~/test-network
 ./network.sh up createChannel -ca -c mychannel
 ./network.sh deployCC -ccn review_event -ccl go -ccv 1.0 -ccp ~/hyper-ledger-fabric-mini-project/chaincode
@@ -32,7 +29,5 @@ node server.js
 
 -End
 
-<bash shell------>
 cd ~/test-network
 ./network.sh down
-<bash shell done--->
